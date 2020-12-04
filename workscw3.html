@@ -93,8 +93,6 @@
         <option value=11>December</option>
     </select>
 </label>
-
-
 <!-- User selects type of data he/she wishes to be displayed-->
 <label> What data:
     <select name="datatype" size="1" id="category">
@@ -103,81 +101,28 @@
         <option value=average>daily average</option>
     </select>
 </label>
-<!--<input type="submit" id="datatype" name="datatype"-->
-<!--       onclick="whatData(document.getElementById('category').value, document.getElementById('month_c').value)"-->
-<!--       value="Request information" style="font-family:georgia;" style="background-color:rgb(116, 30, 15);">-->
-
-<input type="submit"
-       onclick="createTableByMonth(document.getElementById('month_c').value,document.getElementById('category').value)"
-       value="temp">
-
-<!--user chooses a specific date AND if the data will be displayed before, on or after that date. (
-    user radio buttons for options)-->
+<button type="submit"
+        onclick="createTableByMonth(document.getElementById('month_c').value,document.getElementById('category').value)"
+>Get Information
+</button>
+<!--user chooses a specific date AND if the data will be displayed before, on or after that date.-->
 <!--notice the user will only be able to choose a date in the frame of the data we have in the files.-->
+<br>
 <label>Select specific date:</label>
-<input type="date" id="date_c" name="selectdate" min="2020-01-02" max="2020-11-08">
-
-<input type="submit" id="date_c" name="selectdate" value="Request information"
-       onclick="showDate(document.getElementById('date_c').value)" , style="font-family:georgia;">
-
-<label for="frame">Select one of the following options:</label>
-<label for="yellowBank">The chosen date</label>
-<input type="radio" name="frame" id="onDate" value="onDate">
-<label for="beforeDate">Up until the chosen date</label>
-<input type="radio" name="frame" id="beforeDate" value="beforeDate">
-<label for="afterDate">After the chosen date</label>
-<input type="radio" name="frame" id="afterDate" value="afterDate">
-<a href="javascript:dateFrame();">show frame</a>
-
-
-<!-- Displaying the information that the user requested in an appropriate table-->
-<form action="/displayIntel" method="get">
-    <hr style="background-color:#DBA69D;">
-    <style>
-        table, th, td {
-            border-spacing: 5px;
-            border: 1px rgb(191, 230, 235);
-            text-align: center;
-            padding: 20px
-        }
-    </style>
-
-
-    <!--  <input type="text" id="datatable" onkeyup="searchTable()" placeholder="Search for names.." title="Insert "> -->
-    <div id="wrapper" class="container">
-        <h2>Filterable Table</h2>
-        <p>Type something in the input field to search the table for first names, last names or emails:</p>
-        <input class="form-control" id="myinout" type="text" placeholder="Search..">
-        <br>
-        <thead>
-        <tr>
-            <th>Date</th>
-            <th>Cases</th>
-            <th>Test</th>
-            <th>Test Capacity</th>
-            <th>Patients in Hospital</th>
-        </tr>
-        </thead>
-        <tbody id="datatable">
-        <!--what works for displaying the table with the push of a button:-->
-        <table class="table table-bordered">
-            <button type="button" onclick="load()">Get covid information</button>
-            <br><br>
-            <!--actually works! generate table without changes-->
-
-            <button type="button" onclick="loadXMLFile('12')">Get covid information</button>
-            <br><br>
-            <table id="datatable"></table>
-    </div>
-
-    <!--show top 10 outputs in table-->
-
-    <!--<button type="button" onclick="loadXMLFileTop('12')">Get top 10 outputs</button>
-    <br><br>
-    <table id="datatable"></table>
-    </div> -->
-
-
+<input type="date" id="date_c" min="2020-01-02" max="2020-11-08">
+<br>
+<label>Select one of the following options:</label>
+    <select name="filter" size="1" id="filter">
+        <option value=equal>Chosen Date</option>
+        <option value=bigger>After Date</option>
+        <option value=lesser>Before Date</option>
+    </select>
+</label>
+<button type="submit"
+        onclick="createTableByDate(document.getElementById('date_c').value,document.getElementById('filter').value)"
+>Get Information
+</button>
+<table id="myTable"></table>
     <!--Alert- resources for accurate and updated COVID-19 information-->
     <div class="alert alert-info alert alert-success" role="alert">
         <h4 class="alert-heading">Disclaimer:</h4>
@@ -207,236 +152,10 @@
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-
-
-        <script>
-            //Create table with data from the files- case.xml, testing.xml, hospital.xml
-            //Some code is taken from W3 tutorials.
-            //Create table with data from the files- case.xml, testing.xml, hospital.xml
-            // var files = ["cases.xml", "testing.xml", "hospital.xml"];
-            // var count = 0;
-            // table = "<tr><th>Date</th><th>Cases</th><th>Tests</th><th>Testing Capacity</th><th>Hospital Cases</th></tr>";
-
-            // function loadXMLFile(month) {
-            //     var xmlhttp = new XMLHttpRequest();
-            //     xmlhttp.open("GET", files[count], true);
-            //     xmlhttp.onreadystatechange = function () {
-            //         if (this.readyState == 4 && this.status == 200) {
-            //             createTable(this, month);
-            //             count++;
-            //             if (count < files.length)
-            //                 loadXMLFile(month)
-            //         }
-            //     };
-            //     xmlhttp.send();
-            // }
-
-            function createTable(xml, month) {
-                var i;
-                var xmlDoc = xml.responseXML;
-                var x = xmlDoc.getElementsByTagName("data");
-                if (count == 0) {
-                    for (i = 0; i < x.length; i++) {
-                        if (month == "12" || parseInt(x[i].getElementsByTagName("date")[0].childNodes[0].nodeValue.slice(5, 7)) == parseInt(month) + 1) {
-                            table += "<tr><td>" +
-                                x[i].getElementsByTagName("date")[0].childNodes[0].nodeValue +
-                                "</td><td>";
-                            table += x[i].getElementsByTagName("newCasesByPublishDate")[0].childNodes[0].nodeValue +
-                                "</td><td>";
-                            table += "N/A" + "</td><td>" + "N/A" + "</td><td>" + "N/A" + "</td></tr>";
-
-                        }
-                    }
-                    document.getElementById("datatable").innerHTML = table;
-                }
-                if (count == 1) {
-                    for (i = 1; i < document.getElementById("datatable").rows.length; i++) {
-                        for (j = 0; j < x.length; j++) {
-                            if (x[j].getElementsByTagName("date")[0].childNodes[0].nodeValue
-                                == document.getElementById("datatable").rows[i].cells[0].innerHTML) {
-                                if (x[j].getElementsByTagName("newPCRTestsByPublishDate")[0].childNodes[0])
-                                    document.getElementById("datatable").rows[i].cells[2].innerHTML
-                                        = x[j].getElementsByTagName("newPCRTestsByPublishDate")[0].childNodes[0].nodeValue;
-                                if (x[j].getElementsByTagName("plannedPCRCapacityByPublishDate")[0].childNodes[0])
-                                    document.getElementById("datatable").rows[i].cells[3].innerHTML
-                                        = x[j].getElementsByTagName("plannedPCRCapacityByPublishDate")[0].childNodes[0].nodeValue;
-                            }
-                        }
-                    }
-                }
-                if (count == 2) {
-                    for (i = 1; i < document.getElementById("datatable").rows.length; i++) {
-                        for (j = 0; j < x.length; j++) {
-                            if (x[j].getElementsByTagName("date")[0].childNodes[0].nodeValue
-                                == document.getElementById("datatable").rows[i].cells[0].innerHTML) {
-                                document.getElementById("datatable").rows[i].cells[4].innerHTML
-                                    = x[j].getElementsByTagName("hospitalCases")[0].childNodes[0].nodeValue;
-                            }
-                        }
-                    }
-                }
-
-            }
-
-
-            function drawTable() {
-                var i;
-
-                var tableheaders = "<tr><th>Date</th><th>Cases</th><th>Tests</th><th>Test Capacity</th><th>Patients in Hospital</th></tr>";
-
-                for (i = 0; i < rows.length; i++) {
-                    tableheaders += "<tr><td>" + rows[i].date
-                        + "</td><td>" + rows[i].newCasesByPublishDate
-                        + "</td><td>" + rows[i].newPCRTestsByPublishDate
-                        + "</td><td>" + rows[i].plannedPCRCapacityByPublishDate
-                        + "</td><td>" + rows[i].hospitalCases
-                        + "</td></tr>";
-                }
-                console.log(rows);
-                //name of table created is datatable
-                document.getElementById("datatable").innerHTML = tableheaders;
-            }
-
-
-            //task 2 - show type of data for a specific month that the user choses from dropdown menu
-
-            function whatData(datatype, month) {
-                //alert(datatype);
-                //alert("bla");
-
-
-                //daily data will be marked as  0
-                if (datatype == '0') {
-                    loadXMLFile(month);
-                    //return table without any changes/filters
-                }
-                //monthly total will be marked as 1
-                else if (datatype == 1) {
-                    //loadMonthlyXMLFile(month);
-                    //monthlyData(month);
-                    //return the total for each category 
-                    //the name of the month should be displayed in the 'date' column
-
-                }
-                //daily average will be marked as  2
-                else if (datatype == 2) {
-
-                }
-
-            }
-
-            function showDate(selectdate) {
-
-            }
-
-            //the two following functions will be used to get the monthly total of each column in the month the user has chosen.
-            /*function loadMonthlyXMLFile(month) {
-                var xmlhttp = new XMLHttpRequest();
-                xmlhttp.open("GET", files[count], true);
-                xmlhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    monthlyData(this, month);
-                    count++;
-                    if (count < files.length)
-                        loadMonthlyXMLFile(month)
-                }
-                };
-                xmlhttp.send();
-            }
-            function monthlyData(xml, month) {
-                
-                var i;
-                var xmlDoc = xml.responseXML;
-                var x = xmlDoc.getElementsByTagName("data");
-                var newcases = 0;
-                if (count == 0) {
-                for (i = 0; i < x.length; i++) {
-                    if(month == "12" || parseInt(x[i].getElementsByTagName("date")[0].childNodes[0].nodeValue.slice(5,7))==parseInt(month)+1){
-                        //total of cases
-                        newcases += parseInt(x[i].getElementsByTagName("newCasesByPublishDate")[0].childNodes[0].nodeValue);
-                        
-                    } 
-                }
-                document.getElementById("datatable").innerHTML = table;
-                }
-                var newtests=0;
-                var newtestscap=0;
-                if (count == 1) {
-                    for (i = 1; i < document.getElementById("datatable").rows.length; i++) {
-                        for (j = 0; j < x.length; j++) {
-                            if(month == "12" || parseInt(x[i].getElementsByTagName("date")[0].childNodes[0].nodeValue.slice(5,7))==parseInt(month)+1) {
-                                if(x[j].getElementsByTagName("newPCRTestsByPublishDate")[0].childNodes[0]){
-                                    newtests += parseInt(x[j].getElementsByTagName("newPCRTestsByPublishDate")[0].childNodes[0]);
-                                }
-                            
-                                if(x[j].getElementsByTagName("plannedPCRCapacityByPublishDate")[0].childNodes[0]){
-                                    newtestscap +=parseInt(x[j].getElementsByTagName("plannedPCRCapacityByPublishDate")[0].childNodes[0]);
-                                }
-
-        
-                            }
-                        } 
-                        
-                    }
-                }
-                var newpatientsinh =0;
-                if (count == 2) {
-                    for (i = 1; i < document.getElementById("datatable").rows.length; i++) {
-                        for (j = 0; j < x.length; j++) {
-                            if (month=="12" || parseInt(x[j].getElementsByTagName("date")[0].childNodes[0].nodeValue.slice(5,7))== parseInt(month)+1) {
-                                    //document.getElementById("datatable").rows[i].cells[4].innerHTML
-                                    newpatientsinh += parseInt(x[j].getElementsByTagName("hospitalCases")[0].childNodes[0].nodeValue);
-                                }
-                            }
-                        }
-                    }
-                console.log(newcases);
-                console.log(newtests);
-                console.log(newtestscap);
-
-            }*/
-
-
-
-            //search the table:
-            /*function searchTable() {
-                var input, filter, table, tr, td, i, txtValue;
-                input = document.getElementById("datatable");
-                
-                table = document.getElementById("datatable");
-                tr = table.getElementsByTagName("tr");
-                for (i = 0; i < tr.length; i++) {
-                    td = tr[i].getElementsByTagName("td")[0];
-                    if (td) {
-                        txtValue = td.textContent || td.innerText;
-                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                    }       
-                }
-            }
-            //drop down filter table
-            /*$(document).ready(function(){
-            $("#myInput").on("keyup", function() {
-                var value = $(this).val().toLowerCase();
-                $(".dropdown-menu li").filter(function() {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-                });
-            });
-            });*/
-            //$('[data-command="reset"]').click(function () {    
-            //window.location.href = window.location.href;
-            //}
-        </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <!--        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"-->
-        <!--                integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"-->
-        <!--                crossorigin="anonymous"></script>-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
                 integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
                 crossorigin="anonymous"></script>
-        <script src="temp.js"></script>
+        <script src="main.js"></script>
 </body>
 </html>
