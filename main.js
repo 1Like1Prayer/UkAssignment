@@ -68,7 +68,8 @@ function filterDataByMonth(data, month, groupBy) {
     if (month !== '12' && data) {
         Object.keys(data).map((file) => {
             filteredData[file] = data[file].filter(item => {
-                return item.date.substr(5, 2) === month;
+
+                return item.date ? item.date.substr(5, 2) === month : '';
             });
         });
     } else filteredData = {...data};
@@ -100,12 +101,10 @@ function averageData(data) {
         return {...acc, [key]: data[key].length};
     }, {});
     const currData = {...monthlyData(data)};
-    console.log(currData.cases[0].cases);
     currData.cases[0].cases = [data.cases[0].cases / dataLengths.cases];
     currData.testing[0].tests = [currData.testing[0].tests / dataLengths.testing];
     currData.testing[0].testCapacity = [currData.testing[0].testCapacity / dataLengths.testing];
     currData.hospital[0].hospitalCases = [currData.hospital[0].hospitalCases / dataLengths.hospital];
-    console.log(currData);
     let finalData = ({
         ...currData,
         cases: {...currData.cases, cases: currData.cases[0].cases / dataLengths.cases},
