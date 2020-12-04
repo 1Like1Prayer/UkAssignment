@@ -68,7 +68,6 @@ function filterDataByMonth(data, month, groupBy) {
     if (month !== '12' && data) {
         Object.keys(data).map((file) => {
             filteredData[file] = data[file].filter(item => {
-
                 return item.date ? item.date.substr(5, 2) === month : '';
             });
         });
@@ -101,21 +100,21 @@ function averageData(data) {
         return {...acc, [key]: data[key].length};
     }, {});
     const currData = {...monthlyData(data)};
-    currData.cases[0].cases = [data.cases[0].cases / dataLengths.cases];
-    currData.testing[0].tests = [currData.testing[0].tests / dataLengths.testing];
-    currData.testing[0].testCapacity = [currData.testing[0].testCapacity / dataLengths.testing];
-    currData.hospital[0].hospitalCases = [currData.hospital[0].hospitalCases / dataLengths.hospital];
+    currData.cases[0].cases = currData.cases[0].cases ? [data.cases[0].cases / dataLengths.cases] : 0;
+    currData.testing[0].tests = currData.testing[0].tests ? [currData.testing[0].tests / dataLengths.testing] : 0;
+    currData.testing[0].testCapacity = currData.testing[0].testCapacity ? [currData.testing[0].testCapacity / dataLengths.testing] : 0;
+    currData.hospital[0].hospitalCases = currData.hospital[0].hospitalCases ? [currData.hospital[0].hospitalCases / dataLengths.hospital] : 0;
     let finalData = ({
         ...currData,
-        cases: {...currData.cases, cases: currData.cases[0].cases / dataLengths.cases},
+        cases: {...currData.cases, cases: currData.cases[0].cases ? currData.cases[0].cases / dataLengths.cases : 0},
         testing: {
             ...currData.testing,
-            tests: currData.testing[0].tests / dataLengths.testing,
-            testCapacity: currData.testing[0].testCapacity / dataLengths.testing
+            tests: currData.testing[0].test ? currData.testing[0].tests / dataLengths.testing : 0,
+            testCapacity: currData.testing[0].testCapacity ? currData.testing[0].testCapacity / dataLengths.testing : 0
         },
         hospital: {
             ...currData.hospital,
-            hospitalCases: currData.hospital[0].hospitalCases / dataLengths.hospital
+            hospitalCases: currData.hospital[0].hospitalCases ? currData.hospital[0].hospitalCases / dataLengths.hospital : 0
         }
     });
     finalData.cases = [finalData.cases];
@@ -180,4 +179,3 @@ function createTableByDate(date, filter) {
     document.getElementById('myTable').innerHTML = '';
     document.getElementById('myTable').innerHTML = table;
 }
-
